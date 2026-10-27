@@ -1,4 +1,4 @@
-# Backend Training Tasks
+# Django Backend Training Tasks
 
 A Django project built as part of backend training.
 
