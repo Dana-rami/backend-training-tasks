@@ -14,13 +14,25 @@ Completed in this phase:
 - Created a superuser
 - Verified that the development server runs and Django Admin is accessible
 
+## Phase 2 – Authentication (JWT)
+
+Endpoints (all `POST`, under `/api/auth/`):
+
+| Endpoint | Description |
+|---|---|
+| `/api/auth/register/` | Create a user (`username`, `email`, `password`) |
+| `/api/auth/login/` | Obtain an access and refresh token (`username`, `password`) |
+| `/api/auth/refresh/` | Get a new access token (`refresh`) |
+
+Registration uses Django's built-in `User` model. Login and refresh use Simple JWT's `TokenObtainPairView` and `TokenRefreshView`.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
 ├── config/       # Project settings and URL configuration
 ├── company/      # Company app
-├── accounts/     # Accounts app
+├── accounts/     # Accounts app (registration and JWT auth URLs)
 ├── manage.py
 ├── Pipfile
 └── Pipfile.lock
