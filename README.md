@@ -1,4 +1,4 @@
-# Django Backend Training Tasks
+# Backend Training Tasks
 
 A Django project built as part of backend training.
 
@@ -8,7 +8,8 @@ Completed in this phase:
 
 - Created the Django project (`config`)
 - Created the `company` app
-- Installed Django REST Framework and Simple JWT
+- Created the `accounts` app (empty for now; reserved for the custom user model and authentication code)
+- Installed Django, Django REST Framework and Simple JWT, managed with Pipenv
 - Applied database migrations (SQLite)
 - Created a superuser
 - Verified that the development server runs and Django Admin is accessible
@@ -17,29 +18,30 @@ Completed in this phase:
 
 ```
 backend-training-tasks/
-├── config/     # Project settings and URL configuration
-├── company/    # Company app
-└── manage.py
+├── config/       # Project settings and URL configuration
+├── company/      # Company app
+├── accounts/     # Accounts app
+├── manage.py
+├── Pipfile
+└── Pipfile.lock
 ```
 
 ## Getting Started
 
-```bash
-# Create and activate a virtual environment
-python -m venv .venv
-.venv\Scripts\activate        # Windows
+Requires Python 3.12 and [Pipenv](https://pipenv.pypa.io/).
 
-# Install dependencies
-pip install django djangorestframework djangorestframework-simplejwt
+```bash
+# Install dependencies from Pipfile.lock
+pipenv install
 
 # Apply migrations
-python manage.py migrate
+pipenv run python manage.py migrate
 
 # Create a superuser
-python manage.py createsuperuser
+pipenv run python manage.py createsuperuser
 
 # Run the development server
-python manage.py runserver
+pipenv run python manage.py runserver
 ```
 
 Django Admin is available at <http://127.0.0.1:8000/admin/>.
