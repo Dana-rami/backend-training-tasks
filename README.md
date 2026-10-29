@@ -8,9 +8,9 @@ Completed in this phase:
 
 - Created the Django project (`config`)
 - Created the `company` app
-- Created the `accounts` app (empty for now; reserved for the custom user model and authentication code)
+- Created the `accounts` app
 - Installed Django, Django REST Framework and Simple JWT, managed with Pipenv
-- Applied database migrations (SQLite)
+- Applied database migrations (SQLite at the time; replaced by PostgreSQL in Phase 2)
 - Created a superuser
 - Verified that the development server runs and Django Admin is accessible
 
@@ -20,27 +20,49 @@ Endpoints (all `POST`, under `/api/auth/`):
 
 | Endpoint | Description |
 |---|---|
-| `/api/auth/register/` | Create a user (`username`, `email`, `password`) |
+| `/api/auth/register/` | Create a user (`username`, `email`, `password`, optional `phone_number`) |
 | `/api/auth/login/` | Obtain an access and refresh token (`username`, `password`) |
 | `/api/auth/refresh/` | Get a new access token (`refresh`) |
 
-Registration uses Django's built-in `User` model. Login and refresh use Simple JWT's `TokenObtainPairView` and `TokenRefreshView`.
+Login and refresh use Simple JWT's `TokenObtainPairView` and `TokenRefreshView`.
+
+### Custom user model
+
+`accounts.User` extends Django's `AbstractUser` and adds an optional `phone_number` field (max 20 characters). It is set as `AUTH_USER_MODEL` and registered in Django Admin.
+
+### Database (PostgreSQL)
+
+The project uses PostgreSQL. Database credentials are read from a `.env` file, which is not tracked by git.
+
+1. Create an empty PostgreSQL database named `backend_training_django`.
+2. Copy `.env.example` to `.env` and fill in your values:
+
+   ```
+   DB_NAME=backend_training_django
+   DB_USER=postgres
+   DB_PASSWORD=your_password_here
+   DB_HOST=localhost
+   DB_PORT=5432
+   ```
+
+   If the password contains special characters such as `#` or spaces, wrap it in quotes.
 
 ## Project Structure
 
 ```
 backend-training-tasks/
-├── config/       # Project settings and URL configuration
-├── company/      # Company app
-├── accounts/     # Accounts app (registration and JWT auth URLs)
+├── config/         # Project settings and URL configuration
+├── company/        # Company app
+├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
+├── .env.example    # Template for database settings
 ├── Pipfile
 └── Pipfile.lock
 ```
 
 ## Getting Started
 
-Requires Python 3.12 and [Pipenv](https://pipenv.pypa.io/).
+Requires Python 3.12, [Pipenv](https://pipenv.pypa.io/) and PostgreSQL. Set up `.env` as described above first.
 
 ```bash
 # Install dependencies from Pipfile.lock
