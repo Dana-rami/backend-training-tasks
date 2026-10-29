@@ -32,20 +32,16 @@ Login and refresh use Simple JWT's `TokenObtainPairView` and `TokenRefreshView`.
 
 ### Database (PostgreSQL)
 
-The project uses PostgreSQL. Database credentials are read from a `.env` file, which is not tracked by git.
+The project uses PostgreSQL. The connection is configured with a single `DATABASE_URL` read from a `.env` file by [django-environ](https://django-environ.readthedocs.io/). The `.env` file is not tracked by git.
 
 1. Create an empty PostgreSQL database named `backend_training_django`.
 2. Copy `.env.example` to `.env` and fill in your values:
 
    ```
-   DB_NAME=backend_training_django
-   DB_USER=postgres
-   DB_PASSWORD=your_password_here
-   DB_HOST=localhost
-   DB_PORT=5432
+   DATABASE_URL=postgres://postgres:your_password_here@localhost:5432/backend_training_django
    ```
 
-   If the password contains special characters such as `#` or spaces, wrap it in quotes.
+   The format is `postgres://USER:PASSWORD@HOST:PORT/DATABASE_NAME`. If the password contains special characters such as `@`, `#`, `/` or `:`, percent-encode them (for example `@` becomes `%40`).
 
 ## Project Structure
 

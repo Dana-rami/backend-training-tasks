@@ -8,7 +8,7 @@ django = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 psycopg = {extras = ["binary"], version = "*"}
-python-dotenv = "*"
+django-environ = "*"
 
 [dev-packages]
 
