@@ -57,12 +57,22 @@ Two models in the `company` app, both registered in Django Admin:
 
 Apply the migrations with `pipenv run python manage.py migrate`.
 
+## Phase 4 – Serializers
+
+Serializers for the `company` app are in `company/serializers.py` (no views or URLs yet):
+
+- `DepartmentSerializer`: `id`, `name`, `created_at`.
+- `EmployeeSerializer`: `id`, `name`, `email`, `department`, `department_name`, `created_by`, `created_at`.
+  - `department` accepts a department id; `department_name` is read-only output.
+  - `created_by` is read-only (it will be set from the logged-in user in a later phase).
+  - `email` must be unique, compared case-insensitively. The email is stored as typed.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
 ├── config/         # Project settings and URL configuration
-├── company/        # Company app (Department and Employee models)
+├── company/        # Company app (Department and Employee models, serializers)
 ├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
 ├── .env.example    # Template for database settings
