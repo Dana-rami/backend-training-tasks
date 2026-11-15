@@ -88,6 +88,15 @@ All endpoints are under `/api/` and require a JWT access token (`Authorization: 
 
 An invalid `?department=` value (not a number) returns `400`. Lists are not paginated.
 
+## Phase 6 – URLs
+
+All routes are written by hand in `company/urls.py` (mounted under `/api/` in `config/urls.py`), one explicit `path()` per view. No router is used.
+
+- **URL design:** Paths use lowercase, dash-separated, plural nouns (`departments/`, `employees/`). An item is addressed by its id with `<int:pk>/`. URL names are snake_case (`department_list`, `employee_update`, ...), so code can use `reverse('employee_detail', kwargs={'pk': 1})` instead of hard-coded paths.
+- **One view per operation:** Each view class handles a single operation, so each URL has a clear, small set of HTTP methods (list and detail: `GET`; create: `POST`; update: `PUT`/`PATCH`; delete: `DELETE`).
+- **Why no router:** A router builds URLs from a ViewSet automatically. This project uses generic views, not ViewSets, and writing the URLs by hand keeps every endpoint visible in one file and easy to read and debug.
+- **Why create, update and delete have their own paths:** A URL can only point to one view class. Because list, create, detail, update and delete are separate classes, each needs a distinct path (`create/`, `<id>/update/`, `<id>/delete/`) so Django can tell them apart.
+
 ## Project Structure
 
 ```
