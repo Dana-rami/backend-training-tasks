@@ -69,22 +69,24 @@ Serializers for the `company` app are in `company/serializers.py` (no views or U
 
 ## Phase 5 – Views
 
-Class-based generic views (`ListAPIView`, `CreateAPIView`, `RetrieveAPIView`, `UpdateAPIView`, `DestroyAPIView`), one class per operation. No ViewSets.
+Class-based generic views (`ListCreateAPIView`, `RetrieveUpdateDestroyAPIView`). No ViewSets.
+
+The URL does not say what to do; the HTTP method decides. The collection URL handles list and create, and the item URL handles detail, update and delete.
 
 All endpoints are under `/api/` and require a JWT access token (`Authorization: Bearer <access token>`). This is set with `DEFAULT_PERMISSION_CLASSES = IsAuthenticated`; the register, login and refresh endpoints stay open.
 
 | Method | Endpoint | Name | Description |
 |---|---|---|---|
 | GET | `/api/departments/` | `department_list` | List departments |
-| POST | `/api/departments/create/` | `department_create` | Create a department |
+| POST | `/api/departments/` | `department_list` | Create a department |
 | GET | `/api/departments/<id>/` | `department_detail` | Get one department |
-| PUT, PATCH | `/api/departments/<id>/update/` | `department_update` | Update a department |
-| DELETE | `/api/departments/<id>/delete/` | `department_delete` | Delete a department (also deletes its employees) |
+| PUT, PATCH | `/api/departments/<id>/` | `department_detail` | Update a department |
+| DELETE | `/api/departments/<id>/` | `department_detail` | Delete a department (also deletes its employees) |
 | GET | `/api/employees/` | `employee_list` | List employees; filter with `?department=<id>` |
-| POST | `/api/employees/create/` | `employee_create` | Create an employee (`created_by` is the logged-in user) |
+| POST | `/api/employees/` | `employee_list` | Create an employee (`created_by` is the logged-in user) |
 | GET | `/api/employees/<id>/` | `employee_detail` | Get one employee |
-| PUT, PATCH | `/api/employees/<id>/update/` | `employee_update` | Update an employee |
-| DELETE | `/api/employees/<id>/delete/` | `employee_delete` | Delete an employee |
+| PUT, PATCH | `/api/employees/<id>/` | `employee_detail` | Update an employee |
+| DELETE | `/api/employees/<id>/` | `employee_detail` | Delete an employee |
 
 An invalid `?department=` value (not a number) returns `400`. Lists are not paginated.
 
