@@ -43,12 +43,26 @@ The project uses PostgreSQL. The connection is configured with a single `DATABAS
 
    The format is `postgres://USER:PASSWORD@HOST:PORT/DATABASE_NAME`. If the password contains special characters such as `@`, `#`, `/` or `:`, percent-encode them (for example `@` becomes `%40`).
 
+## Phase 3 – Models
+
+Two models in the `company` app, both registered in Django Admin:
+
+| Model | Fields |
+|---|---|
+| `Department` | `name`, `created_at` |
+| `Employee` | `name`, `email` (unique), `department`, `created_by`, `created_at` |
+
+- `Employee.department` is a foreign key to `Department` (`related_name="employees"`, cascade delete).
+- `Employee.created_by` is a foreign key to the custom user model (`settings.AUTH_USER_MODEL`, cascade delete).
+
+Apply the migrations with `pipenv run python manage.py migrate`.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
 ├── config/         # Project settings and URL configuration
-├── company/        # Company app
+├── company/        # Company app (Department and Employee models)
 ├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
 ├── .env.example    # Template for database settings
