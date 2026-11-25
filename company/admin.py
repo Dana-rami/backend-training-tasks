@@ -10,4 +10,4 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'department', 'created_by', 'created_at')
+    list_display = ('name', 'email', 'department', 'user', 'role', 'created_by', 'created_at')
