@@ -67,12 +67,35 @@ Serializers for the `company` app are in `company/serializers.py` (no views or U
   - `created_by` is read-only (it will be set from the logged-in user in a later phase).
   - `email` must be unique, compared case-insensitively. The email is stored as typed.
 
+## Phase 5 – Views
+
+Class-based generic views (`ListCreateAPIView`, `RetrieveUpdateDestroyAPIView`). No ViewSets.
+
+The URL does not say what to do; the HTTP method decides. The collection URL handles list and create, and the item URL handles detail, update and delete.
+
+All endpoints are under `/api/` and require a JWT access token (`Authorization: Bearer <access token>`). This is set with `DEFAULT_PERMISSION_CLASSES = IsAuthenticated`; the register, login and refresh endpoints stay open.
+
+| Method | Endpoint | Name | Description |
+|---|---|---|---|
+| GET | `/api/departments/` | `department_list` | List departments |
+| POST | `/api/departments/` | `department_list` | Create a department |
+| GET | `/api/departments/<id>/` | `department_detail` | Get one department |
+| PUT, PATCH | `/api/departments/<id>/` | `department_detail` | Update a department |
+| DELETE | `/api/departments/<id>/` | `department_detail` | Delete a department (also deletes its employees) |
+| GET | `/api/employees/` | `employee_list` | List employees; filter with `?department=<id>` |
+| POST | `/api/employees/` | `employee_list` | Create an employee (`created_by` is the logged-in user) |
+| GET | `/api/employees/<id>/` | `employee_detail` | Get one employee |
+| PUT, PATCH | `/api/employees/<id>/` | `employee_detail` | Update an employee |
+| DELETE | `/api/employees/<id>/` | `employee_detail` | Delete an employee |
+
+An invalid `?department=` value (not a number) returns `400`. Lists are not paginated.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
 ├── config/         # Project settings and URL configuration
-├── company/        # Company app (Department and Employee models, serializers)
+├── company/        # Company app (Department and Employee models, serializers, views, URLs)
 ├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
 ├── .env.example    # Template for database settings
