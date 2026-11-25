@@ -122,11 +122,22 @@ Every endpoint requires a JWT (`IsAuthenticated` is the default). On top of that
 
 **First admin.** Create a superuser with `createsuperuser` (it is an admin without an employee profile). It can then create employees and link them to users with `user` and `role`. `POST /api/auth/register/` still only creates a user, so register first, then an admin links that user to an employee.
 
+## Phase 8 – Middleware
+
+Two middleware classes in `config/middleware.py`, registered first in `MIDDLEWARE`:
+
+- `RequestIDMiddleware`: gives every request an ID. It keeps the client's `X-Request-ID` header if it is a normal value (letters, digits, `.`, `_`, `-`, up to 64 characters), otherwise it creates a UUID. The ID is stored on `request.request_id` and sent back in the `X-Request-ID` response header.
+- `RequestLoggingMiddleware`: logs one line per request with the request ID, method, path, status code and time, using the `requests` logger (console, configured in `LOGGING`).
+
+Example log line: `[0326075e...] POST /api/auth/login/ -> 200 (284.2 ms)`
+
+**Request lifecycle.** A request goes down the `MIDDLEWARE` list (top to bottom) to the view, and the response goes back up in the reverse order. Each middleware wraps the next one through `get_response`. Order matters: the ID middleware is first so the ID already exists when the logging middleware runs, and the logging middleware sees the final status code of everything below it.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
-├── config/         # Project settings and URL configuration
+├── config/         # Project settings, URL configuration and middleware
 ├── company/        # Company app (models, serializers, views, URLs, permissions)
 ├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
