@@ -133,6 +133,40 @@ Example log line: `[0326075e...] POST /api/auth/login/ -> 200 (284.2 ms)`
 
 **Request lifecycle.** A request goes down the `MIDDLEWARE` list (top to bottom) to the view, and the response goes back up in the reverse order. Each middleware wraps the next one through `get_response`. Order matters: the ID middleware is first so the ID already exists when the logging middleware runs, and the logging middleware sees the final status code of everything below it.
 
+## Phase 9 – Manual Testing
+
+Tested by hand with curl against a running server (`python manage.py runserver`). The same requests work in Postman: use the same URL, method, header `Authorization: Bearer <token>` and a JSON body.
+
+Setup: create a superuser (`createsuperuser`), then log in as it to get an admin token. Register a second user (`/api/auth/register/`), then, as admin, create an employee linked to that user with `"user": <id>`. Log in as that user to test a normal employee.
+
+| Area | Request | Token | Expected |
+|---|---|---|---|
+| Auth | `GET /api/departments/` | none | `401` |
+| Auth | `POST /api/auth/register/` | none | `201` |
+| Auth | `POST /api/auth/login/` (right / wrong password) | none | `200` with `access` and `refresh` / `401` |
+| CRUD | `POST /api/departments/` | admin | `201` |
+| CRUD | `POST /api/employees/` (with `department`, optional `user`, `role`) | admin | `201`, `created_by` is the admin |
+| CRUD | `GET /api/employees/?department=<id>` | admin | `200`, only that department |
+| CRUD | `PATCH /api/employees/<id>/` | admin | `200` |
+| CRUD | `DELETE /api/employees/<id>/` | admin | `204` |
+| Permissions | `GET /api/employees/` | employee | `200`, only their own department |
+| Permissions | `GET /api/employees/<id>/` of another department | employee | `403` |
+| Permissions | `POST`, `PATCH` or `DELETE` on any endpoint | employee | `403` |
+| Permissions | `GET /api/employees/` | user with no employee profile | `403` |
+| Middleware | any request, with header `X-Request-ID: my-test-1` | any | the same header in the response, and the ID in the server log |
+
+Example (curl, bash):
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "<password>"}'
+
+curl http://127.0.0.1:8000/api/employees/ -H "Authorization: Bearer <access token>"
+```
+
+On Windows PowerShell use `curl.exe` (plain `curl` is an alias for another command) or Postman, because PowerShell handles the JSON quotes differently.
+
 ## Project Structure
 
 ```
