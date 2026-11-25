@@ -99,12 +99,35 @@ All routes are written by hand in `company/urls.py` (mounted under `/api/` in `c
 - **Two views per model:** A URL can only point to one view class, so the list and create operations share one generic view (`ListCreateAPIView`) and detail, update and delete share another (`RetrieveUpdateDestroyAPIView`). That gives four `path()` entries in total.
 - **Why no router:** A router builds URLs from a ViewSet automatically. This project uses generic views, not ViewSets, and writing the URLs by hand keeps every endpoint visible in one file and easy to read and debug.
 
+## Phase 7 – Permissions
+
+Every endpoint requires a JWT (`IsAuthenticated` is the default). On top of that, `company/permissions.py` adds roles and department checks.
+
+**User ↔ Employee.** An employee is a person who logs in, so `Employee.user` links an employee to a login account (`OneToOneField`, optional, so employees created before this phase still work). `Employee.role` is `admin` or `employee` (default `employee`). Superusers are always admins.
+
+| Role | What they can do |
+|---|---|
+| Admin (`role=admin` or superuser) | Everything: view, create, update, delete, on all departments and employees |
+| Employee (`role=employee`) | View only, and only their own department and its employees |
+| Logged-in user with no employee profile | Nothing (`403`) |
+
+**How it is enforced**
+
+- `IsAdminOrReadOnly`: role check. Normal employees may only use `GET`, `HEAD` and `OPTIONS`.
+- `IsSameDepartment`: department check on a single object. Opening another department (or one of its employees) returns `403`.
+- Lists are filtered in `get_queryset`, so a normal employee only sees their own department's data.
+- `created_by` is still set from the logged-in user. The admin sets `user` and `role` when creating an employee.
+
+**Migrations.** The new fields are in a new migration (`company/0002_employee_user_role.py`). The first migration was not edited.
+
+**First admin.** Create a superuser with `createsuperuser` (it is an admin without an employee profile). It can then create employees and link them to users with `user` and `role`. `POST /api/auth/register/` still only creates a user, so register first, then an admin links that user to an employee.
+
 ## Project Structure
 
 ```
 backend-training-tasks/
 ├── config/         # Project settings and URL configuration
-├── company/        # Company app (Department and Employee models, serializers, views, URLs)
+├── company/        # Company app (models, serializers, views, URLs, permissions)
 ├── accounts/       # Accounts app (custom user model, registration and JWT auth URLs)
 ├── manage.py
 ├── .env.example    # Template for database settings
