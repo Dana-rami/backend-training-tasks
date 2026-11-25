@@ -60,6 +60,10 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    # Our middleware is first so the request ID exists for everything below it,
+    # and the log line also covers the time spent in the other middleware.
+    'config.middleware.RequestIDMiddleware',
+    'config.middleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -143,5 +147,20 @@ STATIC_URL = 'static/'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
+
+# Log one line per request (see config/middleware.py) to the console.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {'format': '%(asctime)s %(levelname)s %(name)s %(message)s'},
+    },
+    'handlers': {
+        'console': {'class': 'logging.StreamHandler', 'formatter': 'simple'},
+    },
+    'loggers': {
+        'requests': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
     },
 }
